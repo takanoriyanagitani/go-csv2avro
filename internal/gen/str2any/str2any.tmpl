@@ -1,0 +1,32 @@
+package csv2avro
+
+// This file is generated using str2any.tmpl. NEVER EDIT.
+
+var StringToAnyInvalid StringToAny = func(
+	_ string,
+) (any, error) {
+	return nil, ErrInvalidConv
+}
+
+func TypeToConverter(typ PrimitiveType) StringToAny {
+	switch typ {
+
+	{{- range .Pairs }}
+
+	case Primitive{{ .TypeHint }}:
+		return func(s string)(any, error){
+			return StringTo{{ .TypeHint }}(s)
+		}
+
+	{{- end }}
+
+	case PrimitiveTimestamp:
+		return func(s string)(any, error){
+			return StringToTimestamp3339(s)
+		}
+
+	default:
+		return StringToAnyInvalid
+
+	}
+}
